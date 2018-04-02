@@ -1,0 +1,68 @@
+<objdefs appVersion="1.0.12">
+   <obj.normal id="latch_catch_2" uuid="1c0c005ed2d7e06ae5f377ba13d9d09f4747ac87">
+      <sDescription>Switches between output 1 and 2. S low enables output 1, S high enables output 2. When switching, the last value is mainained on the output. When the live input changes, the output does not start changing until the live value reaches the stored value.</sDescription>
+      <author>Kriz Roring</author>
+      <license>BSD</license>
+      <helpPatch>controller_banking_help.axh</helpPatch>
+      <inlets>
+         <frac32 name="in" description="Input"/>
+         <frac32 name="start1" description="Start value for output 1"/>
+         <frac32 name="start2" description="Start value for output 2"/>
+         <bool32 name="s" description="Switches between output 1 and 2"/>
+      </inlets>
+      <outlets>
+         <frac32 name="out1" description="Output 1"/>
+         <frac32 name="out2" description="Output 2"/>
+      </outlets>
+      <displays/>
+      <params/>
+      <attribs/>
+      <code.declaration><![CDATA[int32_t storedValue1;
+              int32_t storedValue2;
+              int startSet = 0;
+              int ntrig1 = 1;
+              int ntrig2 = 1;]]></code.declaration>
+      <code.krate><![CDATA[if ( startSet == 0 ) {
+                storedValue1 = inlet_start1;
+                storedValue2 = inlet_start2;
+
+                startSet = 1;
+              }
+
+              if ( inlet_s ) {
+                if ( ntrig1 == 0 ) {
+                  storedValue1 = inlet_in;
+                  ntrig1 = 1;
+                }
+
+                outlet_out1 = storedValue1;
+
+                if ( ntrig2 == 1 ) {
+                  if ( (inlet_in < (storedValue2 + 1)) && (inlet_in > (storedValue2 - 1))) {
+                    ntrig2 = 0;
+                  }
+                  outlet_out2 = storedValue2;
+                } else {
+                  ntrig2 = 0;
+                  outlet_out2 = inlet_in;
+                }
+              } else {
+                if ( ntrig2 == 0 ) {
+                  storedValue2 = inlet_in;
+                  ntrig2 = 1;
+                }
+
+                outlet_out2 = storedValue2;
+
+                if ( ntrig1 == 1 ) {
+                  if ( (inlet_in < (storedValue1 + 1)) && (inlet_in > (storedValue1 - 1))) {
+                    ntrig1 = 0;
+                  }
+                  outlet_out1 = storedValue1;
+                } else {
+                  ntrig1 = 0;
+                  outlet_out1 = inlet_in;
+                }
+              }]]></code.krate>
+   </obj.normal>
+</objdefs>

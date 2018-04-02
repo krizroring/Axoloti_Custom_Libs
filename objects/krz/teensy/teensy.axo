@@ -1,0 +1,104 @@
+<objdefs appVersion="1.0.12">
+    <obj.normal id="teensy" uuid="1c0c005ed2d7e0624527ba13d9d09f4747ac87">
+        <sDescription>Script object for the Teensy Axoloti bridge</sDescription>
+        <author>Kriz Roring</author>
+        <license>BSD</license>
+        <helpPatch></helpPatch>
+        <inlets>
+            <frac32 name="ctrl1" description="ctrl1"/>
+            <frac32 name="ctrl2" description="ctrl2"/>
+            <frac32 name="ctrl3" description="ctrl3"/>
+            <frac32 name="ctrl4" description="ctrl4"/>
+            <frac32 name="ctrl5" description="ctrl5"/>
+            <frac32 name="ctrl6" description="ctrl6"/>
+            <frac32 name="ctrl7" description="ctrl7"/>
+            <frac32 name="ctrl8" description="ctrl8"/>
+        </inlets>
+        <outlets>
+            <bool32 name="bank_" description="bank"/>
+        </outlets>
+        <displays/>
+        <params/>
+        <attribs>
+            <text name="script"/>
+            <spinner name="controllers" MinValue="0" MaxValue="8" DefaultValue="8"/>
+            <table name="name1"/>
+            <table name="name2"/>
+            <table name="name3"/>
+            <table name="name4"/>
+            <table name="name5"/>
+            <table name="name6"/>
+            <table name="name7"/>
+            <table name="name8"/>
+        </attribs>
+        <includes/>
+        <code.declaration>
+            <![CDATA[
+                int32_t ctrl[8] = {};
+                int32_t bank, ctrls;
+                char name[8][64] = {};
+
+                attr_script
+                msg_t ThreadX2(){
+                    setup();
+                        while(!chThdShouldTerminate()){
+                            loop();
+                            chThdSleepMilliseconds(1);
+                        }
+                        chThdExit((msg_t)0);
+                }
+                static msg_t ThreadX(void *arg) {
+                    ((attr_parent *)arg)->ThreadX2();
+                }
+                WORKING_AREA(waThreadX, 1024);
+                Thread *Thd;
+            ]]>
+        </code.declaration>
+        <code.init>
+            <![CDATA[
+                std::fill_n( ctrl, 0, 0 );
+
+                for ( int i = 0; i < 8; i++ )
+                {
+                    std::fill_n(name[i], 64, 0x20);
+                }
+
+                strcpy(&name[0][0],"attr_name1");
+                strcpy(&name[1][0],"attr_name2");
+                strcpy(&name[2][0],"attr_name3");
+                strcpy(&name[3][0],"attr_name4");
+                strcpy(&name[4][0],"attr_name5");
+                strcpy(&name[5][0],"attr_name6");
+                strcpy(&name[6][0],"attr_name7");
+                strcpy(&name[7][0],"attr_name8");
+
+                bank=0;
+                ctrls = attr_controllers;
+
+                Thd = chThdCreateStatic(waThreadX, sizeof(waThreadX), NORMALPRIO, ThreadX, (void *)this);
+            ]]>
+        </code.init>
+        <code.dispose>
+            <![CDATA[
+                   chThdTerminate(Thd);
+                   chThdWait(Thd);
+            ]]>
+        </code.dispose>
+        <code.krate>
+            <![CDATA[
+                outlet_bank__ = this->bank;
+
+                this->ctrl[0] = inlet_ctrl1;
+                this->ctrl[0] = inlet_ctrl1;
+                this->ctrl[0] = inlet_ctrl1;
+                this->ctrl[1] = inlet_ctrl2;
+                this->ctrl[2] = inlet_ctrl3;
+                this->ctrl[3] = inlet_ctrl4;
+                this->ctrl[4] = inlet_ctrl5;
+                this->ctrl[5] = inlet_ctrl6;
+                this->ctrl[6] = inlet_ctrl7;
+                this->ctrl[7] = inlet_ctrl8;
+            ]]>
+        </code.krate>
+    </obj.normal>
+</objdefs>

@@ -1,0 +1,70 @@
+<objdefs appVersion="1.0.12">
+   <obj.normal id="analog_smoothing" uuid="1c0c845ed2d7e06ae5f327ba13d9d09f4747ac87">
+      <sDescription>Reads an external analog voltage. Smooths out reading, based on the smoothing parameter. Display out is the value range set by the smoothing parameter, usefull for LCD displays, etc.</sDescription>
+      <author>Kriz Roring</author>
+      <license>BSD</license>
+      <inlets/>
+      <outlets>
+         <frac32 name="value"/>
+         <frac32 name="display"/>
+      </outlets>
+      <displays/>
+      <params/>
+      <attribs>
+         <combo name="channel">
+            <MenuEntries>
+               <string>PA0 (ADC1_IN0)</string>
+               <string>PA1 (ADC1_IN1)</string>
+               <string>PA2 (ADC1_IN2)</string>
+               <string>PA3 (ADC1_IN3)</string>
+               <string>PA4 (ADC1_IN4)</string>
+               <string>PA5 (ADC1_IN5)</string>
+               <string>PA6 (ADC1_IN6)</string>
+               <string>PA7 (ADC1_IN7)</string>
+               <string>PB0 (ADC1_IN8)</string>
+               <string>PB1 (ADC1_IN9)</string>
+               <string>PC0 (ADC1_IN10)</string>
+               <string>PC1 (ADC1_IN11)</string>
+               <string>PC2 (ADC1_IN12)</string>
+               <string>PC3 (ADC1_IN13)</string>
+               <string>PC4 (ADC1_IN14)</string>
+            </MenuEntries>
+            <CEntries>
+               <string>0</string>
+               <string>1</string>
+               <string>2</string>
+               <string>3</string>
+               <string>4</string>
+               <string>5</string>
+               <string>6</string>
+               <string>7</string>
+               <string>8</string>
+               <string>9</string>
+               <string>10</string>
+               <string>11</string>
+               <string>12</string>
+               <string>13</string>
+               <string>14</string>
+            </CEntries>
+         </combo>
+         <combo name="smoothing">
+            <MenuEntries>
+               <string>0-127</string>
+               <string>0-255</string>
+               <string>0-511</string>
+               <string>0-1023</string>
+            </MenuEntries>
+            <CEntries>
+               <string>5</string>
+               <string>4</string>
+               <string>3</string>
+               <string>2</string>
+            </CEntries>
+         </combo>
+      </attribs>
+      <code.declaration><![CDATA[int32_t value;]]></code.declaration>
+      <code.krate><![CDATA[value = adcvalues[attr_channel] >> attr_smoothing;
+outlet_display = value;
+outlet_value = value << (attr_smoothing + 15);]]></code.krate>
+   </obj.normal>
+</objdefs>

@@ -1,0 +1,50 @@
+<objdefs appVersion="1.0.12">
+    <obj.normal id="latch_catch_1" uuid="1c0c005ed2d7e06ae5f327ba13d9d09f4747ac87">
+        <sDescription>Switches between live and stored value. When hold in high, the last value is mainained on the output. When catch is enabled and the live input changes, the output does not start changing until the live value reaches the stored value.</sDescription>
+        <author>Kriz Roring</author>
+        <license>BSD</license>
+        <inlets>
+            <frac32 name="in" description="Input"/>
+            <bool32 name="hold" description="High stores and outputs the last value"/>
+        </inlets>
+        <outlets>
+            <frac32 name="out" description="Output"/>
+        </outlets>
+        <displays/>
+        <params>
+            <bool32.tgl name="catch" description="Enable catch mode"/>
+          </params>
+        <attribs></attribs>
+        <code.declaration>
+            <![CDATA[
+              int32_t storedValue;
+              int ntrig = 0;
+            ]]>
+        </code.declaration>
+        <code.krate>
+            <![CDATA[
+              if ( inlet_hold > 0 ) {
+                if (!ntrig ) {
+                  storedValue = inlet_in;
+                  ntrig = 1;
+                }
+                outlet_out = storedValue;
+              } else {
+                if ( param_catch) {
+                  if ( ntrig ) {
+                    if ( (inlet_in < (storedValue + 1)) && (inlet_in > (storedValue - 1))) {
+                      ntrig = 0;
+                    }
+                    outlet_out = storedValue;
+                  } else {
+                    outlet_out = inlet_in;
+                  }
+                } else {
+                  ntrig = 0;
+                  outlet_out = inlet_in;
+                }
+              }
+            ]]>
+        </code.krate>
+    </obj.normal>
+</objdefs>
